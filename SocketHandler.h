@@ -13,7 +13,9 @@
 #include <string>
 #include <ctime>
 class WorkQueue;
+class WorkCommand;
 #include "WorkQueue.h"
+#include "WorkCommand.h"
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
@@ -24,10 +26,9 @@ private:
   tcp::endpoint tcp_endpoint{ tcp::v4(), 2486 };
   tcp::acceptor tcp_acceptor{ ioservice, tcp_endpoint };
   std::map<int, tcp::socket> tcp_sockets;
-  void write(int, yield_context);
+  void write(WorkCommand*, yield_context);
   void accept(yield_context);
-  int socket_index;
-  WorkQueue* workQueue;
+  WorkQueue* workQueue; 
 
 public:
   SocketHandler(WorkQueue* workQueue);

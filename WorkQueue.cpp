@@ -38,8 +38,4 @@ void WorkQueue::retrieveWork( WorkerThread* workerThread )
     std::cout << "hasWork is true..." << std::endl;
     workerThread->doWork( WorkCommand );
   }
-
-  boost::this_thread::sleep_for(boost::chrono::seconds(3));
-  if( hasWork )
-    std::cout << "hasWork is still true..." << std::endl;
 }

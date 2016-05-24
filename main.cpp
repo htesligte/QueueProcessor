@@ -2,13 +2,6 @@
 #include "WorkerThread.h"
 #include "SocketHandler.h"
 
-
-
-
-
-
-
-
 void startSocketHandler(WorkQueue* workQueue)
 {
   SocketHandler sh(workQueue);
