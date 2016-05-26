@@ -30,7 +30,6 @@ private:
   void accept(yield_context);
   WorkQueue* workQueue;
   void read( WorkCommand* wc );
-  void close( WorkCommand* wc );
 public:
   SocketHandler(WorkQueue* workQueue);
   void run();

@@ -50,16 +50,3 @@ void SocketHandler::run()
   spawn( ioservice, boost::bind(&SocketHandler::accept, this, _1) );
   ioservice.run();
 }
-
-void SocketHandler::close(WorkCommand* wc )
-{
-  wc->getSocket()->close();
-  if( wc->getSocket()->is_open() )
-  {
-    //auto socket = wc->getSocket();
-    //socket->shutdown(tcp::socket::shutdown_send);
-  }
-    
-  
-  //
-}
