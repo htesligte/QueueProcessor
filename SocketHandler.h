@@ -28,8 +28,9 @@ private:
   std::map<int, tcp::socket> tcp_sockets;
   void write(WorkCommand*, yield_context);
   void accept(yield_context);
-  WorkQueue* workQueue; 
-
+  WorkQueue* workQueue;
+  void read( WorkCommand* wc );
+  void close( WorkCommand* wc );
 public:
   SocketHandler(WorkQueue* workQueue);
   void run();

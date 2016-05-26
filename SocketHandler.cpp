@@ -2,13 +2,11 @@
 #include "WorkCommand.h"
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
+#include <typeinfo>
 
 SocketHandler::SocketHandler(WorkQueue* workQueue)
 {
   this->workQueue = workQueue;
-  // tcp_endpoint = tcp::endpoint( tcp::v4(), port );
-  // tcp_acceptor = tcp::acceptor( ioservice, tcp_endpoint );
-
 }
 
 void SocketHandler::accept(yield_context yield)
@@ -18,20 +16,24 @@ void SocketHandler::accept(yield_context yield)
     WorkCommand* wc = new WorkCommand(&ioservice);
     tcp_acceptor.async_accept( (*wc->getSocket()), yield );
     spawn(ioservice, [&](yield_context yield) {
-
-      // do work
-      std::cout << "Should be adding work..." << std::endl;
-      workQueue->addWork("hello world!");
-
-      this->write(wc, yield);
+      this->read( wc );
     });
   }
 }
 
-//void SocketHandler::read( int pos, yield_context yield )
-//{ 
-  //tcp_sockets.at(pos)->async_read_some()
-//}
+void SocketHandler::read( WorkCommand* wc )
+{
+  wc->getSocket()->async_read_some( (*wc->getBuffer()), [=]( const boost::system::error_code& ec, std::size_t bytes_transferred ) {
+    if( bytes_transferred == 0 && ec.value() == boost::asio::error::eof )
+    {
+      delete wc;
+      return;
+    }
+      
+    wc->processBuffer( bytes_transferred );
+    this->read( wc );
+  });
+}
 
 void SocketHandler::write( WorkCommand* wc, yield_context yield )
 {
@@ -40,7 +42,6 @@ void SocketHandler::write( WorkCommand* wc, yield_context yield )
   async_write( (*wc->getSocket()), buffer(data), yield );
 
   delete wc;
-  //tcp_sockets.erase(pos);
 }
 
 void SocketHandler::run()
@@ -48,4 +49,17 @@ void SocketHandler::run()
   tcp_acceptor.listen();
   spawn( ioservice, boost::bind(&SocketHandler::accept, this, _1) );
   ioservice.run();
+}
+
+void SocketHandler::close(WorkCommand* wc )
+{
+  wc->getSocket()->close();
+  if( wc->getSocket()->is_open() )
+  {
+    //auto socket = wc->getSocket();
+    //socket->shutdown(tcp::socket::shutdown_send);
+  }
+    
+  
+  //
 }
