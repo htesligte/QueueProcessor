@@ -1,0 +1,9 @@
+{
+	"command": "add-list-to-queue",
+	"parameters": 
+		{
+			"list": 15,
+			"queue": 21,
+			"apikey": "abc-123"
+		}
+}

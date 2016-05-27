@@ -2,7 +2,6 @@
 #include "WorkCommand.h"
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
-#include <typeinfo>
 
 SocketHandler::SocketHandler(WorkQueue* workQueue)
 {
@@ -31,17 +30,14 @@ void SocketHandler::read( WorkCommand* wc )
     }
       
     wc->processBuffer( bytes_transferred );
+    if( wc->isCommandValid() )
+    {
+      this->workQueue->addWork(wc);
+      return;
+    }
+    
     this->read( wc );
   });
-}
-
-void SocketHandler::write( WorkCommand* wc, yield_context yield )
-{
-  std::time_t now = std::time(nullptr);
-  std::string data = std::ctime(&now);
-  async_write( (*wc->getSocket()), buffer(data), yield );
-
-  delete wc;
 }
 
 void SocketHandler::run()

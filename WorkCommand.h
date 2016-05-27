@@ -9,8 +9,10 @@ class WorkCommand {
 private:
   tcp::socket socket;
   std::array<char, 4096> bufferData;
-  //std::string buffer;
   boost::asio::mutable_buffers_1 buffer;
+  void validateJSON();
+  bool json_valid;
+  std::string command;
 
 public:
   WorkCommand( boost::asio::io_service* ioservice );
@@ -18,9 +20,8 @@ public:
   tcp::socket* getSocket();
   boost::asio::mutable_buffers_1* getBuffer();
 
-  size_t getBufferSize();
-  void debug();
   void processBuffer( size_t bytes );
-  std::string command;
+  bool isCommandValid();
+  std::string getSystemCommand();
 };
 #endif

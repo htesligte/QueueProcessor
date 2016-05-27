@@ -3,15 +3,15 @@
 class WorkQueue;
 #include "WorkQueue.h"
 #include <string>
+#include "WorkCommand.h"
 class WorkerThread
 {
 public:
   WorkerThread( WorkQueue* workQueue );
   void findWork();
-  void doWork( std::string WorkCommand );
+  void doWork( WorkCommand* wc );
   std::string getName();
 private:
   WorkQueue* workQueue;
-//  std::string ThreadName;
 };
 #endif
