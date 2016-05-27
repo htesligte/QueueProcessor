@@ -11,6 +11,7 @@ public:
   void findWork();
   void doWork( WorkCommand* wc );
   std::string getName();
+  int getRandom();
 private:
   WorkQueue* workQueue;
 };
