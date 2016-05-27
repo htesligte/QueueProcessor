@@ -10,8 +10,9 @@ void WorkerThread::findWork()
 }
 void WorkerThread::doWork( WorkCommand* wc )
 {
-  system( wc->getSystemCommand().c_str() );
+  std::string command = wc->getSystemCommand();
   delete wc;
+  system( command.c_str() );
 }
 
 std::string WorkerThread::getName()
