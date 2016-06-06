@@ -25,6 +25,7 @@ int WorkerThread::getRandom()
 void WorkerThread::doWork( WorkCommand* wc )
 {
   std::string command = wc->getSystemCommand();
+  std::cout << "Doing work: " << command << std::endl;
   delete wc;
   system( command.c_str() );
 }
