@@ -1,20 +1,22 @@
 #ifndef WORKQUEUE_H
 #define WORKQUEUE_H
-class WorkerThread;
-class WorkCommand;
+#include <boost/asio/io_service.hpp>
 #include <boost/thread/thread.hpp>
 #include <string>
 #include "WorkerThread.h"
 #include "WorkCommand.h"
+class WorkerThread;
+class WorkCommand;
+
 class WorkQueue
 {
 private:
-  std::deque<WorkCommand*> work;
-  boost::mutex* mutex;
+  boost::asio::io_service ioService;
+  boost::asio::io_service::work bWork;
+  boost::thread_group threads;
 public:
-  WorkQueue(boost::mutex *mutex);
-  void addWork(WorkCommand* work);
-  void retrieveWork( WorkerThread* workerThread );
+  WorkQueue();
   ~WorkQueue();
+  void addWork(WorkCommand* work);
 };
 #endif

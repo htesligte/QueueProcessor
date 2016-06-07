@@ -1,34 +1,22 @@
 #include "WorkQueue.h"
-WorkQueue::WorkQueue(boost::mutex *mutex)
+#include "WorkerThread.h"
+WorkQueue::WorkQueue() : bWork(ioService)
 {
-  this->mutex = mutex;
+  for( int i = 0; i < 10; i++ )
+    this->threads.create_thread( boost::bind( &boost::asio::io_service::run, &ioService ) );
 }
 
 WorkQueue::~WorkQueue()
 {
+  ioService.stop();
+  threads.join_all();
 }
 
 void WorkQueue::addWork(WorkCommand* wc)
 {
-  this->mutex->lock();
-  work.push_back(wc);
-  this->mutex->unlock();
-}
-
-void WorkQueue::retrieveWork( WorkerThread* workerThread )
-{
-  WorkCommand* wc;
-  bool hasWork = false;
-
-  this->mutex->lock();
-  if( work.size() > 0 )
-  {
-    hasWork = true;
-    wc = work.front();
-    work.pop_front();
-  }
-  this->mutex->unlock();
-
-  if( hasWork )
-    workerThread->doWork( wc );
+  ioService.post([=]() {
+    WorkerThread thread;
+    thread.doWork(wc);
+    delete wc;
+  });
 }
