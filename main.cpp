@@ -17,13 +17,11 @@ int main()
   boost::thread socketThread{startSocketHandler, &workQueue};
 
   // thread pool for work - yeah I know I should have used boosts' threadpool :-(
-  /*for( int i = 0; i < 10; i++ )
+  for( int i = 0; i < 10; i++ )
   {
     WorkerThread *workerThread = new WorkerThread( &workQueue );
     new boost::thread( &WorkerThread::findWork, workerThread );
-  }*/
-  WorkerThread *workerThread = new WorkerThread( &workQueue );
-  workerThread->findWork();
+  }
 
   // hang main thread
   while(true) {
